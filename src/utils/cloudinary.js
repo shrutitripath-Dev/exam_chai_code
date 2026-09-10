@@ -7,7 +7,7 @@ cloudinary.config({
     api_secret:process.env.CLOUDINARY_API_SECRET
 });
 
-const uploadingOnCloudinaary = async (localFilePath) => {
+const uploadingOnCloudinary = async (localFilePath) => {
     try{
         if (!localFilePath) return null
         //uplod the file onvloudinary 
@@ -27,10 +27,11 @@ const uploadingOnCloudinaary = async (localFilePath) => {
 }
 
     
-    // // Upload an image
+    // Upload an image
     //  const uploadResult = await cloudinary.uploader
     //    .upload(
     //        'https://res.cloudinary.com/demo/image/upload/getting-started/shoes.jpg', {
     //            public_id: 'shoes',
     //        }
     //    )
+export {uploadingOnCloudinary}
