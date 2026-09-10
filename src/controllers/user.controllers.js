@@ -1,7 +1,7 @@
 import { response } from 'express';
 import { asyncHandler } from '../utils/asyncHandler.js';
-import {ApiError} from '../utils/ApiError.js';
-import {User} from '../models/user.model.js';
+import { ApiError } from '../utils/ApiError.js';
+import { User } from '../models/user.model.js';
 import { uploadingOnCloudinary } from '../utils/cloudinary.js';
 import { ApiResponse } from '../utils/ApiResponse.js';
 
@@ -22,7 +22,7 @@ const registerUser = asyncHandler(async (req , res) => {
 
     }
     // check if user already exist : username , email
-    const extendedUser = User.findOne( {
+    const extendedUser = await User.findOne( {
         $or: [{ email },{ username }]
     })
     console.log('extendedUser: ',extendedUser);
@@ -32,7 +32,7 @@ const registerUser = asyncHandler(async (req , res) => {
     }
 
     // check for img and avatar
-
+    
     const avatarLocationPath = req.files?.avatar[0]?.path;
     
     console.log('avatarLocationPath: ',avatarLocationPath);
@@ -44,6 +44,7 @@ const registerUser = asyncHandler(async (req , res) => {
            throw new ApiError(400,'Avatar is required')
     }
     
+
     // uplode them to cloudinary , avatar
         
     const avatar = await uploadingOnCloudinary(avatarLocationPath);
@@ -54,8 +55,9 @@ const registerUser = asyncHandler(async (req , res) => {
         
     console.log(coverImage)
 
-    //login check img 
-        
+
+    //login check img
+
     if(!avatar){
         
         throw new ApiError(400,'Avatar is required')
