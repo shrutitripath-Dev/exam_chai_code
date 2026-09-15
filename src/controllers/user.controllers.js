@@ -5,7 +5,6 @@ import { User } from '../models/user.model.js';
 import { uploadingOnCloudinary } from '../utils/cloudinary.js';
 import { ApiResponse } from '../utils/ApiResponse.js';
 
-
 const registerUser = asyncHandler(async (req , res) => {
 
     // get user details from frontend
@@ -97,4 +96,34 @@ console.log('req.body: ', req.body);
     }
 )
 
-export { registerUser }
+const loginUser = asyncHandler( async (req , res) => {
+    //taken data from req 
+    const { email , username , password } = req.body
+
+    //cheack data we get or not
+    if(!email || !username){
+        throw new ApiError(402,'User give the full Data ');
+    }
+
+    const user = await User.findOne({
+        $or : [{email},{username}]
+    })
+
+    if(!user){
+        throw new ApiError(400,'User does not exist ');
+    }
+    const validPass = await user.isPasswordCorrect(password);
+
+    if(!validPass){
+        throw new ApiError(400,'Password Error');
+    }
+
+})
+export { registerUser , loginUser}
+
+//data for req
+//check the email || username
+//find the user
+//check password
+//create acces and refresh Token and give 
+//add the cookie
