@@ -148,7 +148,8 @@ const loginUser = asyncHandler( async (req , res) => {
         secure:true
     }
 
-    return res.select(200)
+    return res
+    .select(200)
     .cookie('accessToken', accessToken, option )
     .cookie('refreshToken', refreshToken, option )
     .json(
@@ -160,7 +161,31 @@ const loginUser = asyncHandler( async (req , res) => {
             "User logged in Successfuly "
         )
     )
-
-
 })
-export { registerUser , loginUser}
+
+const logoutUser = asyncHandler(async(req,res) => {
+    await User.findByIdAndUpdate(
+        req.user._id,
+        {
+            $set:{
+                refrehToken: undefined
+            }
+        },
+        {
+            new: true
+        }
+    )
+
+    //--------------------send the cooki ------------//
+    const option= {
+        httpOnly: true,
+        secure:true
+    }
+
+    return res
+    .select(200)
+    .cookie('accessToken',  option )
+    .cookie('refreshToken', refreshToken, option )
+    .json(new ApiResponse(200))
+}) 
+export { registerUser , loginUser, logoutUser }
