@@ -16,6 +16,7 @@ const generatAccesAndRefrehToken = async (userId) => {
         return { accessToken , refreshToken }
 
     }catch(error){
+        console.log('Real error is : ',error)
         throw new ApiError(500,"Error: Server problem no acces &brefresh token made ")
     }
 }
@@ -65,26 +66,17 @@ console.log('req.body: ', req.body);
     
 
     // uplode them to cloudinary , avatar
-        
     const avatar = await uploadingOnCloudinary(avatarLocationPath);
-        
     console.log(avatar);
-        
     const coverImage = await uploadingOnCloudinary(coverImageLocationPath);
-        
     console.log(coverImage)
 
-
     //login check img
-
     if(!avatar){
-        
         throw new ApiError(400,'Avatar is required')
-        
     }
         
     // crete user object - create entry in db
-
     const user= await User.create({
         fullName,
         avatar: avatar.url,
@@ -113,10 +105,10 @@ console.log('req.body: ', req.body);
 
 const loginUser = asyncHandler( async (req , res) => {
 //-----------------data for req------------------//
-    const { email , username , password } = req.body
+    const { email , username ,password } = req.body
 
 //-----------------check the email || username------------------//
-    if(!email || !username){
+    if(!(email || username)){
         throw new ApiError(402,'User give the full Data ');
     }
 //-----------------find the user------------------//
@@ -149,7 +141,7 @@ const loginUser = asyncHandler( async (req , res) => {
     }
 
     return res
-    .select(200)
+    .status(200)
     .cookie('accessToken', accessToken, option )
     .cookie('refreshToken', refreshToken, option )
     .json(
@@ -183,7 +175,7 @@ const logoutUser = asyncHandler(async(req,res) => {
     }
 
     return res
-    .select(200)
+    .status(200)
     .cookie('accessToken',  option )
     .cookie('refreshToken', refreshToken, option )
     .json(new ApiResponse(200))
