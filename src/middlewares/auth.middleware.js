@@ -3,17 +3,22 @@ import { ApiError } from '../utils/ApiError.js';
 import jwt from 'jsonwebtoken'
 import {User} from "../models/user.model.js";
 
-export const verifyJWT = asyncHandler(async(req,res,next)=>{
+export const verifyJWT = asyncHandler(async(req,_,next)=>{
     try{
 
-        const token = req.cookies?.accessToken || req.header("Authorization")?.replace("Bearer ","")
+        const authHeader = req.header("Authorization");
 
-        console.log('RAW COOKIES: ', req.cookies)
-        console.log('TOKEN VALUE: ', token, ' | TYPE: ', typeof token)
-       
-  
+        const token = req.cookies?.accessToken || (authHeader?.startsWith("Bearer ") ? authHeader.split(" ")[1] : null);
+        
+        console.log("cookie:", req.cookies?.accessToken);
+        console.log("header:", req.header("Authorization"));
+        console.log("token:", token);
 
-
+              
+        // const decodedToken = jwt.verify(token.trim(), process.env.ACCESS_TOKEN_SECRET);
+        // const token = req.cookies?.accessToken || req.header("Authorization")?.replace("Bearer ","")
+        
+    
         if (!token){
             throw new ApiError(401,'unauthorized request')
         }
@@ -30,7 +35,7 @@ export const verifyJWT = asyncHandler(async(req,res,next)=>{
         next()
     }catch(error){
         throw new ApiError(401, error?.message || 'Invalide access token ')
-
+        
     }
 
 })
