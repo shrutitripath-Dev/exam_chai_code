@@ -81,6 +81,7 @@ const registerUser = asyncHandler(async (req , res) => {
          throw new ApiError(400,'All Information is required')
 
     }
+
     // check if user already exist : username , email
     const extendedUser = await User.findOne( {
         $or: [{ email },{ username }]
@@ -98,11 +99,11 @@ const avatarLocationPath = req.files?.avatar?.[0]?.path;
 
     let coverImageLocationPath;
 
-if(req.files && Array.isArray(req.files.coverImage) && req.files.coverImage.length > 0){
-    coverImageLocationPath = req.files.coverImage[0].path
-}
-console.log('req.files: ', req.files);
-console.log('req.body: ', req.body);
+    if(req.files && Array.isArray(req.files.coverImage) && req.files.coverImage.length > 0){
+        coverImageLocationPath = req.files.coverImage[0].path
+    }
+    console.log('req.files: ', req.files);
+    console.log('req.body: ', req.body);
     // console.log('coverImageLocationPath: ',coverImageLocationPath);
 
     if(!avatarLocationPath){
@@ -245,7 +246,7 @@ const changeCurrentPasswor = asyncHandler(async(req,res) => {
 const getCurrentUser = asyncHandler(async(req,res) => {
     return res
     .status(220)
-    .json(200,req.user,'current user fetches succesfully')
+    .json(new ApiResponse(200,req.user,'current user fetches succesfully'))
 })
 
 const updateAccountDetail = asyncHandler(async(req,res) => {
@@ -254,7 +255,7 @@ const updateAccountDetail = asyncHandler(async(req,res) => {
     if(!fullName || !email){
         throw new ApiError(400,"All fiealds are required")
     }
-    const user = User.findByIdAndUpdate(
+    const user = await User.findByIdAndUpdate(
         req.user?._id,
         {
             $set:{
@@ -333,3 +334,4 @@ export { registerUser ,
     updateuserAvatar,
     updateuserCoverImage
  }
+ 
